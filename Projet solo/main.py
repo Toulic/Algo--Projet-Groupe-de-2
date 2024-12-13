@@ -1,4 +1,5 @@
 import csv
+import tkinter as tk
 from users import *
 from operation_sur_fichier import *
 
@@ -8,28 +9,22 @@ with open('users.csv', 'w', newline='') as csvfile:
     writer.writeheader()
 
 while True:
-    print("\n-------------------------------------------------")
-    print("### MENU DE CONNEXION ###\n")
-    print("T qui ?")
-    print("1. Ajouter un utilisateur")
-    print("2. Supprimer un utilisateur")
-    print("3. Modifier un mot de passe")
-    choix = int(input("Insèrez le choix (en chiffre) : "))
-    choix_user(choix)
+    # Caractéristiques de la fenêtre
+    root = tk.Tk()
+    root.title("Gestion des Produits")
+    root.geometry("900x500")
 
-    test = True
+    tk.Label(root, text="### MENU DES OPTIONS ###", font=("Arial", 14), pady=10).pack()
+    tk.Button(root, text="1. Créer/Réinitialiser le fichier des produits", bg='lightgrey', command=craft_fichier, width=80).pack(pady=10)
+    tk.Button(root, text="2. Ajouter un produit", bg='grey', command=ajout, width=80).pack(pady=10)
+    tk.Button(root, text="3. Supprimer un produit", bg='grey', command=delete, width=80).pack(pady=10)
+    tk.Button(root, text="4. Afficher la liste des produits", bg='grey', command=affiche, width=80).pack(pady=10)
+    tk.Button(root, text="5. Rechercher un produit", bg='grey', command=recherche, width=80).pack(pady=10)
+    tk.Button(root, text="6. Trier les produits", bg='grey', command=tri_produits, width=80).pack(pady=10)
+    tk.Button(root, text="7. Ouvrir la gestion de connexion", bg='yellow', command=connexion, width=100).pack(pady=20)
+    tk.Button(root, text="0. Quitter", bg='red', command=exit, width=60).pack(pady=20)
 
-    if not(test):
-        print("\n-------------------------------------------------")
-        print("### MENU DES OPTIONS ###\n")
-        print("1. Créer/Réinnitialiser le fichier des produits")
-        print("2. Ajouter un produit")
-        print("3. Supprimer un produit")
-        print("4. Afficher la liste des produits")
-        print("5. Rechercher un produit")
-        print("6. Trier les produits")
-        print("\n0. === QUITTER ===")
-        print("-------------------------------------------------")
-        choix = int(input("Insèrez le choix (en chiffre) : "))
-        choix_action(choix)
+    root.mainloop()
+
+
 
