@@ -1,22 +1,27 @@
 import csv
 import operation_sur_fichier
+import tkinter as tk
+from tkinter import messagebox, simpledialog
 
+# Fonction qui ajoute un utilisateur au fichier csv associé
 def ajout_user():
-    with open('users.csv', 'a', newline='') as csvfile:
-        fieldname = ['Username', 'mdp']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldname)
+    try:
+        with open('users.csv', 'a', newline='') as csvfile:
+            fieldname = ['Username', 'mdp']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldname)
 
-        username, mdp = input("Votre nom d'utilisateur"), input("Votre mot de passe")
-        writer.writerow({'Username': username, 'mdp': mdp})
+            username = simpledialog.askstring("Username", "Quel est votre pseudonyme ?").strip()
+            mdp = simpledialog.askstring("Password", "Quel mot de passe voulez-vous ?")
+            writer.writerow({'Username': username, 'mdp': mdp})
+    except FileNotFoundError:
+        messagebox.showerror("Erreur", "Fichier inexistant. Veuillez le créer d'abord.")
 
-
-import csv
-
+# Fonction qui supprime un utilisateur au fichier csv associé
 def delete_user():
     with open("users.csv", 'r', newline='') as csvfile:
         texte = list(csv.reader(csvfile)) 
 
-    ligne_delete = input("Quel utilisateur voulez-vous supprimer (nom) : ").strip()
+    ligne_delete = simpledialog.askstring("Suppression", "Qui voulez-vous supprimer").strip()
 
     new_texte = [ligne for ligne in texte if ligne[0].strip() != ligne_delete]
 
@@ -25,39 +30,45 @@ def delete_user():
         writer = csv.writer(csvfile)
         writer.writerows(new_texte) 
 
-    print(f"L'utilisateur '{ligne_delete}' a été supprimé.")
+    messagebox.showinfo("Info", "Utilisateur supprimé avec succès.")
 
+# Fonction qui permet de changer le mot de passe d'un utilisateur  à faire/adapter car guillemets en trop
 def modif_mdp():
+
     with open("users.csv", 'r', newline='') as csvfile:
-        texte = list(csv.reader(csvfile)) 
+        texte = list(csv.reader(csvfile))
 
-    user = input("Qui êtes-vous ?").strip()
-    new_mdp = input("Quel est votre nouveau mot de passe ?")
 
-    new_texte = []
+    user = simpledialog.askstring("Username", "Quel est votre pseudonyme ?").strip()
+    new_mdp = simpledialog.askstring("Password", "Quel est nouveau mot de passe ?").strip()
+
+    new_texte = [] 
+
+
+    user_found = False  
     for ligne in texte:
-        if ligne[0].strip() != user:
-            new_texte.append(ligne)
+        if ligne[0].strip() == user:
+            new_texte.append([ligne[0], new_mdp]) 
+            user_found = True  
         else:
-            new_texte.append([f"{user}, {new_mdp}"])
-    
-    print(new_texte)
-    
-    with open("users.csv", "w", newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerows(new_texte) 
+            new_texte.append(ligne)
 
-    print(f"Le mot de passe de l'utilisateur '{user}' a été modifié.")
+    if user_found:
+        with open("users.csv", "w", newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerows(new_texte) 
 
-
-
-
-def choix_user(choix):
-    if choix == 1:
-        ajout_user()
-    elif choix == 2:
-        delete_user()
-    elif choix == 3:
-        modif_mdp()
+        messagebox.showinfo("Info", f"Le mot de passe de l'utilisateur '{user}' a été modifié.")
     else:
-        print("Erreur, le choix entré ne correspond à rien")
+        messagebox.showwarning("Erreur", f"L'utilisateur '{user}' n'a pas été trouvé.")
+
+# Fonction qui devrait ouvrir une fenetre de gestion utilisateur
+def connexion():
+    fenetre_utilisateur = tk.Toplevel()
+    fenetre_utilisateur.title("Fenêtre de connexion")
+    fenetre_utilisateur.geometry("500x300")
+    tk.Label(fenetre_utilisateur, text="### MENU DE CONNEXION ###").pack(pady=20)
+    tk.Button(fenetre_utilisateur, text="1. Ajouter un utilisateur", bg='#7ACD3D', command=ajout_user, width=60).pack(pady=10)
+    tk.Button(fenetre_utilisateur, text="2. Modifier un mot de passe", bg='lightgrey', command=modif_mdp, width=60).pack(pady=10)
+    tk.Button(fenetre_utilisateur, text="3. Supprimer un utilisateur", bg='#E36044', command=delete_user, width=60).pack(pady=10)
+    tk.Button(fenetre_utilisateur, text="Fermer", bg='yellow', command=fenetre_utilisateur.destroy).pack(pady=10)
