@@ -1,9 +1,0 @@
-La pedagogie, 0.0, 20
-La daronne de David, 0.2, 400
-Citrons, 3.0, 200
-Katarina de wish, 4.0, 23
-Les traits, 90.0, 21
-mangues, 456.0, 5
-Les doublons, 550.0, 9999
-Al assad gang, 1000.0, 40
-Ajax, 5000.0, 1
