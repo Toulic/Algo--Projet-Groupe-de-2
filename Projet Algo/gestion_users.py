@@ -38,7 +38,7 @@ def ajout_user():
             texte = list(csv.reader(csvfile))
 
         with open('Data/users.csv', 'a', newline='') as csvfile:
-            fieldname = ['Username', 'mdp', 'Name']
+            fieldname = ['Username', 'mdp', 'salt', 'Name'] 
             writer = csv.DictWriter(csvfile, fieldnames=fieldname)
 
             username = simpledialog.askstring("Username", "Quel est votre pseudonyme ?").strip()
@@ -52,15 +52,14 @@ def ajout_user():
                         break
 
             mdp = simpledialog.askstring("Password", "Quel mot de passe voulez-vous ?").strip()
-
             while mdp_pwned(mdp):
                 mdp = simpledialog.askstring("Mot de passe compromis", "Ce mot de passe a été trouvé dans des bases de données compromises.\nVeuillez en choisir un autre.").strip()
-            
-            hash_mdp = hashlib.sha256(mdp.encode('utf-8')).hexdigest().strip()
 
+            salt = os.urandom(16).hex()
+            hash_mdp = hashlib.sha256((mdp + salt).encode('utf-8')).hexdigest().strip()
             name = simpledialog.askstring("Name", "Quel est votre Nom ?")
 
-            writer.writerow({'Username': username, 'mdp': hash_mdp, 'Name': name})
+            writer.writerow({'Username': username, 'mdp': hash_mdp, 'salt': salt, 'Name': name})
             messagebox.showinfo("Info", "Utilisateur créé avec succès.")
 
     except FileNotFoundError:
