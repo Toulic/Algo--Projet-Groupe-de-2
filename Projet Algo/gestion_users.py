@@ -7,7 +7,7 @@ import requests
 from gestion_suggest import *
 import pandas as pd
 
-# Fonction qui 
+# Fonction qui utilise l'API Have I Been Pwned pour vérifier les mots de passes compromis
 def mdp_pwned(mdp):
 
     test_mdp = hashlib.sha1(mdp.encode('utf-8')).hexdigest().upper()
@@ -32,9 +32,11 @@ def mdp_pwned(mdp):
         messagebox.showerror("Erreur", f"Erreur réseau: {e}")
         return False
 
+# Fonction qui hash un mot de passe
 def hash_password(password):
     return hashlib.sha256(password.encode('utf-8')).hexdigest()
 
+# Fonction qui genere le rockyou.csv
 def generate_hashed_passwords(rockyou_file='rockyou.txt', output_file='Data/rockyou.csv', max_passwords=1000000):
     with open(rockyou_file, 'r', encoding='utf-8', errors='ignore') as file, \
             open(output_file, 'w', newline='', encoding='utf-8') as csvfile:
@@ -53,6 +55,26 @@ def generate_hashed_passwords(rockyou_file='rockyou.txt', output_file='Data/rock
 
     messagebox.showinfo("Succès", f'Fichier CSV créé avec succès : {output_file}')
 
+# Fonction qui vérifie le mot de passe compromis avec rockyou.csv
+def is_weak_password(password, rockyou_file='Data/rockyou.csv'):
+    try:
+        df = pd.read_csv(rockyou_file)
+        
+        if 'Password' not in df.columns:
+            raise ValueError("Le fichier CSV doit contenir la colonne 'Password'.")
+
+        # Vérification si le mot de passe de l'utilisateur existe dans le fichier CSV
+        if password in df['Password'].values:
+            return True 
+        
+    except FileNotFoundError:
+        messagebox.showerror("Erreur", "Le fichier de mots de passe est manquant.")
+    except ValueError as ve:
+        messagebox.showerror("Erreur", str(ve))
+    except Exception as e:
+        messagebox.showerror("Erreur", f"Une erreur s'est produite : {str(e)}")
+    
+    return False  
 
 def ajout_user():
     try:
@@ -78,9 +100,10 @@ def ajout_user():
 
             mdp = simpledialog.askstring("Password", "Quel mot de passe voulez-vous ?").strip()
 
-            while mdp_pwned(mdp):
-                mdp = simpledialog.askstring("Mot de passe compromis", "Ce mot de passe a été trouvé dans des bases de données compromises.\nVeuillez en choisir un autre.").strip()
-            
+            # Vérification si le mot de passe est faible (en comparant avec le fichier CSV des mots de passe hachés)
+            while is_weak_password(mdp):  
+                messagebox.showwarning("Mot de passe faible", "Le mot de passe que vous avez choisi a été trouvé dans une base de données de mots de passe compromis (rockyou.txt).\nVeuillez choisir un autre mot de passe.")
+                mdp = simpledialog.askstring("Mot de passe", "Veuillez entrer un mot de passe plus sécurisé :").strip()
             sel = os.urandom(16).hex()
             hash_mdp = hashlib.sha256((mdp + sel).encode('utf-8')).hexdigest().strip()
 

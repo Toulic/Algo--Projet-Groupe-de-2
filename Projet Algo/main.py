@@ -1,7 +1,7 @@
 import csv
 import os
 import tkinter as tk
-#from gestion_users import *
+from gestion_users import *
 #from gestion_produits import *
 #from gestion_suggest import *
 from gestion_fenetres import *
@@ -25,6 +25,7 @@ if not os.path.exists('Data/admin.csv'):
         writer.writeheader()
         writer.writerow({'Username': 'admin', 'mdp': hashlib.sha256('admin'.encode('utf-8')).hexdigest().strip(), 'Name': 'admin'})
 
+#feature pour une option de suggestion de mot de passe
 if not os.path.exists('Data/mdp_suggest.csv'):
 
     os.makedirs('Data', exist_ok=True)
@@ -34,6 +35,9 @@ if not os.path.exists('Data/mdp_suggest.csv'):
         writer = csv.DictWriter(csvfile, fieldnames=fieldname)
         writer.writeheader()
         writer.writerow({'lettres': 'abcdefghijklmnopqrstuvwxyz', 'chiffres': '0123456789', 'speciaux': '&()-_~[]|`^%*!?<>'})
+
+if not os.path.exists('Data/rockyou.csv'):
+    generate_hashed_passwords()
 
 while True:
     # Caractéristiques de la fenêtre
@@ -45,7 +49,6 @@ while True:
     tk.Button(root, text="1. Connexion", bg='lightgrey', command=connexion, width=80).pack(pady=10)
     tk.Button(root, text="2. Inscription", bg='darkgrey', command=inscription, width=80).pack(pady=10)
     tk.Button(root, text="3. Admin", bg='darkgrey', command=connexion_admin, width=80).pack(pady=10)
-    tk.Button(root, text="Test", bg='darkgrey', command=generate_hashed_passwords, width=80).pack(pady=10)
     tk.Button(root, text="0. Quitter", bg='red', command=exit, width=60).pack(pady=40)
 
     root.mainloop()
