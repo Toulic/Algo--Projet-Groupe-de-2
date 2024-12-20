@@ -1,6 +1,6 @@
 Pré-requis : 
 installer pandas, matplotlib et requests avec la commande "pip install [nom de la bibliothèque]"
-télécharger la base de données rockyou.txt du premier lien github en recherche google 
+télécharger la base de données rockyou.txt du premier lien github en recherche google : https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt
 ATTENTION : bien penser à mettre rockyou.txt au même emplacement que ce fichier ReadMe.txt
 
 Marche à suivre : 
