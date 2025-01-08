@@ -93,7 +93,7 @@ def ajout_user():
             while not valide:
                 valide = True
                 for ligne in texte:
-                    if ligne[0].strip() == username:
+                    if ligne and ligne[0].strip() == username:
                         valide = False
                         username = simpledialog.askstring("Username", "Pseudonyme déjà utilisé, veuillez en choisir un autre.").strip()
                         break

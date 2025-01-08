@@ -3,7 +3,6 @@ from tkinter import messagebox, simpledialog
 import pandas as pd
 import os
 import csv
-import matplotlib.pyplot as plt
 import hashlib
 
 # Fonction qui génère le nom de fichier basé sur l'utilisateur

@@ -2,6 +2,11 @@ import tkinter as tk
 from tkinter import messagebox, simpledialog
 from gestion_produits import * 
 from gestion_users import *
+import datetime as dt
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import matplotlib.pyplot as plt
 
 # Fonction qui prépare la connexion de l'admin très sécurisé n'est-ce pas
 def connexion_admin():
@@ -70,14 +75,40 @@ def graphic(user):
     except Exception as e:
         messagebox.showerror("Erreur", f"Une erreur s'est produite : {e}")
 
+# Fonction qui envoie un mail à l'utilisateur quand son mot de passe est compromis
+def send_email(email_address, username):
+    sender_email = "algooprojet@gmail.com"  
+    sender_password = "d d k j c b n f y g c h b y k v"  
+    subject = "Alerte : Mot de passe compromis"
+
+    message = f"""
+    Bonjour {username},
+
+    Nous avons détecté que votre mot de passe a été compromis dans une violation de données. 
+    Nous vous recommandons vivement de le changer immédiatement.
+
+    Merci de votre attention,
+    Équipe de Sécurité
+    """
+
+    try:
+        # Créer le message email
+        msg = MIMEMultipart()
+        msg['From'] = sender_email
+        msg['To'] = email_address
+        msg['Subject'] = subject
+        msg.attach(MIMEText(message, 'plain'))
+
+        # Connexion au serveur SMTP
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, email_address, msg.as_string())
+        messagebox.showinfo("Email envoyé",f"Email envoyé à {email_address} avec succès.")
+    except Exception as e:
+        messagebox.showerror("Erreur",f"Erreur lors de l'envoi de l'email : {e}")
 
 # Fonction qui prépare la connexion, et la rejette si les conditions ne sont pas remplies
-import csv
-import hashlib
-import datetime as dt
-import pandas as pd
-from tkinter import simpledialog, messagebox
-
 def connexion():
     try:
         with open('Data/users.csv', 'r', newline='', encoding='utf-8') as csvfile:
@@ -107,6 +138,8 @@ def connexion():
                         pwned_bool, compromis =  mdp_pwned(mdp) 
                         if pwned_bool:  
                             messagebox.showinfo("Mot de passe compromis", "Votre mot de passe est compromis de façon internationale, vous devriez le changer")
+                            email_address = ligne[4].strip()  
+                            send_email(email_address, login) 
                         writer.writerow({'date': dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'user': login, 'mdp': hash_mdp, 'success': "True", 'compromis': compromis})
                         gestion(login) 
                         return
