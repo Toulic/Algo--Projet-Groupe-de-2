@@ -145,8 +145,10 @@ def delete_user():
     if os.path.exists(f"Data/produits_{ligne_delete}.csv"):
         os.remove(f"Data/produits_{ligne_delete}.csv")
 
-
-    messagebox.showinfo("Info", "Utilisateur supprimé avec succès.")
+    if texte != new_texte:
+        messagebox.showinfo("Info", "Utilisateur supprimé avec succès.")
+    else:
+        messagebox.showinfo("Info", "La suppression a échoué.\nÊtes-vous bien sûr que vous avez rentré un utilisateur existant ?")
 
 # Fonction qui permet de changer le mot de passe d'un utilisateur
 def modif_mdp(user):
@@ -173,7 +175,7 @@ def modif_mdp(user):
     new_mdp = simpledialog.askstring("Password", "Quel est votre nouveau mot de passe ?").strip()
 
     while True:
-        if mdp_pwned(new_mdp):
+        if mdp_pwned(new_mdp)[0]:
            new_mdp = simpledialog.askstring("Password compromis", "Ce mot de passe aussi est compromis, quitte à changer autant le faire bien").strip()
         else:
             break

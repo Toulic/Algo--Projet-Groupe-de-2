@@ -61,7 +61,7 @@ def delete(user):
         if produit_a_supprimer not in df["Nom"].values:
             messagebox.showwarning("Info", "Produit introuvable. Aucune ligne supprimée.")
         else:
-            df = df[df["Nom"] != produit_a_supprimer]
+            df = df[df["Nom"].str.lower() != produit_a_supprimer.lower()]
             df.to_csv(filename, index=False)
             messagebox.showinfo("Info", f"Produit supprimé avec succès du fichier de {user}.")
             
